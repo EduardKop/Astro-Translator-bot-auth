@@ -15,32 +15,33 @@
 
 require("dotenv").config({ path: ".env.local" })
 
+
 const { Telegraf, Markup } = require("telegraf")
 const { createClient } = require("@supabase/supabase-js")
 
-const BOT_TOKEN    = process.env.BOT_TOKEN
-const WEBAPP_URL   = (process.env.WEBAPP_URL || "https://your-domain.com").replace(/\/$/, "")
+const BOT_TOKEN = process.env.BOT_TOKEN
+const WEBAPP_URL = (process.env.WEBAPP_URL || "https://your-domain.com").replace(/\/$/, "")
 const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_KEY = process.env.SUPABASE_KEY
 
-if (!BOT_TOKEN)    throw new Error("BOT_TOKEN is required in .env.local")
+if (!BOT_TOKEN) throw new Error("BOT_TOKEN is required in .env.local")
 if (!SUPABASE_URL) throw new Error("SUPABASE_URL is required in .env.local")
 if (!SUPABASE_KEY) throw new Error("SUPABASE_KEY is required in .env.local")
 
 const IS_HTTPS = WEBAPP_URL.startsWith("https://")
 
-const bot      = new Telegraf(BOT_TOKEN)
+const bot = new Telegraf(BOT_TOKEN)
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const roleLabels = {
-  "Admin":       "Администратор",
-  "C-level":     "Руководство",
+  "Admin": "Администратор",
+  "C-level": "Руководство",
   "SeniorSales": "Старший Sales",
-  "SeniorSMM":   "Старший SMM",
-  "Sales":       "Sales",
-  "Consultant":  "Консультант",
-  "SMM":         "SMM",
+  "SeniorSMM": "Старший SMM",
+  "Sales": "Sales",
+  "Consultant": "Консультант",
+  "SMM": "SMM",
 }
 
 // Кнопка: WebApp (HTTPS) или обычная ссылка (HTTP для локалки)
@@ -114,5 +115,5 @@ bot.launch()
   .then(() => console.log("✅ Astro Translator Bot запущен"))
   .catch((err) => console.error("❌ Ошибка запуска бота:", err.message))
 
-process.once("SIGINT",  () => bot.stop("SIGINT"))
+process.once("SIGINT", () => bot.stop("SIGINT"))
 process.once("SIGTERM", () => bot.stop("SIGTERM"))
