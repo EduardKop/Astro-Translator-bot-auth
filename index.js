@@ -4,9 +4,7 @@
  * Логика:
  * 1. Пользователь пишет /start боту
  * 2. Бот проверяет telegram_id в таблице managers (Supabase)
- * 3. Если есть — отправляет кнопку открыть переводчик
- *    - HTTPS → WebApp кнопка (открывается внутри Telegram)
- *    - HTTP  → обычная URL кнопка (открывается в браузере, для локальной разработки)
+ * 3. Если есть — отправляет URL кнопку (открывается в браузере)
  * 4. Если нет — отказывает в доступе
  *
  * Запуск: node index.js
@@ -28,8 +26,6 @@ if (!BOT_TOKEN) throw new Error("BOT_TOKEN is required in .env.local")
 if (!SUPABASE_URL) throw new Error("SUPABASE_URL is required in .env.local")
 if (!SUPABASE_KEY) throw new Error("SUPABASE_KEY is required in .env.local")
 
-const IS_HTTPS = WEBAPP_URL.startsWith("https://")
-
 const bot = new Telegraf(BOT_TOKEN)
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
@@ -44,13 +40,8 @@ const roleLabels = {
   "SMM": "SMM",
 }
 
-// Кнопка: WebApp (HTTPS) или обычная ссылка (HTTP для локалки)
+// URL кнопка — открывает сайт в браузере
 function openButton() {
-  if (IS_HTTPS) {
-    return Markup.inlineKeyboard([
-      Markup.button.webApp("🌐 Открыть Astro Translator", WEBAPP_URL)
-    ])
-  }
   return Markup.inlineKeyboard([
     Markup.button.url("🌐 Открыть Astro Translator", WEBAPP_URL)
   ])
@@ -109,7 +100,6 @@ bot.on("message", async (ctx) => {
 
 // ── Launch ────────────────────────────────────────────────────────────────────
 console.log(`🔧 WEBAPP_URL: ${WEBAPP_URL}`)
-console.log(`🔧 Режим кнопки: ${IS_HTTPS ? "WebApp (HTTPS)" : "URL (HTTP — локальная разработка)"}`)
 
 bot.launch()
   .then(() => console.log("✅ Astro Translator Bot запущен"))
